@@ -32,7 +32,7 @@ const ROICalculator = () => {
   const [switched, setSwitched] = useState(50);
   const uberCost = (orders * avg * pct) / 100;
   const chatpaySaving = (switched * avg * pct) / 100;
-  const netGain = chatpaySaving - 40;
+  const netGain = chatpaySaving - 39;
   return (
     <div style={{ background: "#0d0f1a", border: "1px solid #1a2035", borderRadius: 16, padding: "2rem" }}>
       <p style={{ color: "#6fa3ff", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.5rem" }}>Run Your Own Numbers</p>
@@ -56,7 +56,7 @@ const ROICalculator = () => {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", borderTop: "1px solid #151c2e", paddingTop: "1.5rem" }}>
         {[
           { label: "Monthly platform fees", value: `€${uberCost.toFixed(0)}`, sub: "you're paying them", color: "#e05252" },
-          { label: "ChatPay subscription", value: "€40", sub: "flat monthly fee", color: "#4a5a80" },
+          { label: "ChatPay subscription", value: "€39", sub: "flat monthly fee", color: "#4a5a80" },
           { label: "Net monthly gain", value: `€${netGain.toFixed(0)}`, sub: "straight to your pocket", color: "#4caf87" },
         ].map(({ label, value, sub, color }) => (
           <div key={label} style={{ background: "#111525", border: "1px solid #151c2e", borderRadius: 10, padding: "1rem", textAlign: "center" }}>
@@ -215,7 +215,7 @@ export default function ChatPaySalesDeck() {
                 <tbody>
                   {[
                     ["Commission per order", "15–20%", "0%", "0%"],
-                    ["Monthly fee", "None", "Hosting costs", "€40 flat"],
+                    ["Monthly fee", "None", "Hosting costs", "€39/month"],
                     ["Brings new customers", "✓ Strong", "✗ Limited", "✗ Retention-focused"],
                     ["You own the customer data", "✗ No", "✓ Yes", "✓ Yes"],
                     ["Direct marketing to customers", "✗ No", "Limited", "✓ WhatsApp broadcasts"],
