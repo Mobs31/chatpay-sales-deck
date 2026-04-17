@@ -1,0 +1,315 @@
+import { useState, useEffect, useRef } from "react";
+
+const useInView = (threshold = 0.12) => {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
+};
+
+const FadeIn = ({ children, delay = 0 }) => {
+  const [ref, inView] = useInView();
+  return (
+    <div ref={ref} style={{
+      opacity: inView ? 1 : 0,
+      transform: inView ? "translateY(0)" : "translateY(24px)",
+      transition: `opacity 0.65s ease ${delay}s, transform 0.65s ease ${delay}s`
+    }}>
+      {children}
+    </div>
+  );
+};
+
+
+const ROICalculator = () => {
+  const [orders, setOrders] = useState(200);
+  const [avg, setAvg] = useState(25);
+  const [pct, setPct] = useState(15);
+  const [switched, setSwitched] = useState(50);
+  useEffect(() => {
+    setSwitched((s) => Math.min(s, orders));
+  }, [orders]);
+  const uberCost = (orders * avg * pct) / 100;
+  const chatpaySaving = (switched * avg * pct) / 100;
+  const netGain = chatpaySaving - 40;
+  return (
+    <div style={{ background: "#0d0f1a", border: "1px solid #1a2035", borderRadius: 16, padding: "2rem" }}>
+      <p style={{ color: "#6fa3ff", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.5rem" }}>Run Your Own Numbers</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.4rem", marginBottom: "1.8rem" }}>
+        {[
+          { label: "Monthly orders via Uber Eats / Just Eat", value: orders, setter: setOrders, min: 50, max: 1000, step: 10 },
+          { label: "Average order value (€)", value: avg, setter: setAvg, min: 10, max: 100, step: 5 },
+          { label: "Platform commission (%)", value: pct, setter: setPct, min: 10, max: 30, step: 1 },
+          { label: "Customers switching to WhatsApp", value: switched, setter: setSwitched, min: 10, max: orders, step: 5 },
+        ].map(({ label, value, setter, min, max, step }) => (
+          <div key={label}>
+            <div style={{ color: "#3a4870", fontSize: "0.68rem", marginBottom: "0.3rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>{label}</div>
+            <div style={{ color: "#fff", fontWeight: 700, fontSize: "1.4rem", marginBottom: "0.3rem" }}>
+              {label.includes("€") ? `€${value}` : label.includes("%") ? `${value}%` : value}
+            </div>
+            <input type="range" min={min} max={max} step={step} value={value} onChange={e => setter(Number(e.target.value))}
+              style={{ width: "100%", accentColor: "#3b7ff6", cursor: "pointer" }} />
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", borderTop: "1px solid #151c2e", paddingTop: "1.5rem" }}>
+        {[
+          { label: "Monthly platform fees", value: `€${uberCost.toFixed(0)}`, sub: "you're paying them", color: "#e05252" },
+          { label: "ChatPay subscription", value: "€40", sub: "flat monthly fee", color: "#4a5a80" },
+          { label: "Net monthly gain", value: `€${netGain.toFixed(0)}`, sub: "straight to your pocket", color: "#4caf87" },
+        ].map(({ label, value, sub, color }) => (
+          <div key={label} style={{ background: "#111525", border: "1px solid #151c2e", borderRadius: 10, padding: "1rem", textAlign: "center" }}>
+            <div style={{ color: "#2e3860", fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>{label}</div>
+            <div style={{ color, fontWeight: 700, fontSize: "1.55rem", marginBottom: "0.2rem" }}>{value}</div>
+            <div style={{ color: "#253050", fontSize: "0.65rem" }}>{sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default function ChatPaySalesDeck() {
+  const [heroVisible, setHeroVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setHeroVisible(true), 120); }, []);
+
+  const S = { maxWidth: 840, margin: "0 auto", padding: "4rem 1.5rem" };
+  const BLUE = "#3b7ff6";
+  const BLUE_L = "#6fa3ff";
+  const BORDER = "#131a2e";
+  const CARD = "#0d0f1a";
+
+  const Tag = ({ label }) => (
+    <p style={{ color: BLUE, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, marginBottom: "0.6rem" }}>{label}</p>
+  );
+  const H2 = ({ children }) => (
+    <h2 style={{ fontWeight: 800, fontSize: "clamp(1.75rem, 4vw, 2.4rem)", lineHeight: 1.15, letterSpacing: "-0.025em", marginBottom: "1rem" }}>{children}</h2>
+  );
+
+  return (
+    <div style={{ background: "#09090f", color: "#e0e6f5", fontFamily: "'Inter', sans-serif", minHeight: "100vh", overflowX: "hidden" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 4px; background: #09090f; }
+        ::-webkit-scrollbar-thumb { background: #3b7ff6; border-radius: 2px; }
+      `}</style>
+
+      {/* NAV */}
+      <nav style={{ position: "sticky", top: 0, zIndex: 50, borderBottom: `1px solid ${BORDER}`, background: "rgba(9,9,15,0.9)", backdropFilter: "blur(14px)", padding: "0 1.5rem" }}>
+        <div style={{ maxWidth: 840, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 54 }}>
+          <span style={{ fontWeight: 700, fontSize: "0.95rem", letterSpacing: "-0.01em" }}>
+            <span style={{ color: "#fff" }}>Chat</span><span style={{ color: BLUE }}>Pay</span>
+          </span>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <div style={{ position: "relative", borderBottom: `1px solid ${BORDER}`, overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 55% 30%, rgba(59,127,246,0.1) 0%, transparent 60%)", pointerEvents: "none" }} />
+        <div style={{ ...S, paddingTop: "5.5rem", paddingBottom: "5.5rem" }}>
+          <div style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(28px)", transition: "all 0.85s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", background: "#0c1020", border: `1px solid ${BORDER}`, borderRadius: 100, padding: "0.28rem 0.9rem", marginBottom: "2rem" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: BLUE, display: "inline-block", boxShadow: `0 0 8px ${BLUE}` }} />
+              <span style={{ color: "#3a4870", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>AI-Powered Commerce in Chat</span>
+            </div>
+            <h1 style={{ fontWeight: 900, fontSize: "clamp(2.6rem, 7vw, 4rem)", lineHeight: 1.08, letterSpacing: "-0.035em", color: "#fff", marginBottom: "1.4rem" }}>
+              AI That <span style={{ color: BLUE_L }}>Sells</span><br />For You
+            </h1>
+            <p style={{ color: "#3a4870", fontSize: "1.05rem", lineHeight: 1.75, maxWidth: 500, marginBottom: "2.5rem" }}>
+              Deploy AI sales agents inside Telegram &amp; WhatsApp. Your customers browse, shop, and pay — all without leaving the chat.
+            </p>
+
+          </div>
+        </div>
+      </div>
+
+      {/* PROBLEM */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <Tag label="The Problem" />
+            <H2>Every Uber Eats order costs you <span style={{ color: BLUE_L }}>more than you think.</span></H2>
+            <p style={{ color: "#3a4870", lineHeight: 1.8, maxWidth: 560, marginBottom: "2.5rem", fontSize: "0.93rem" }}>
+              Platforms like Uber Eats and Just Eat charge 15–20% per order. On top of that, they own the customer relationship — not you. Your regulars are their users. You have no way to reach them directly, reward them, or bring them back without paying again.
+            </p>
+          </FadeIn>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+            {[
+              { stat: "15–20%", label: "Commission per order paid to Uber Eats / Just Eat" },
+              { stat: "€0", label: "Customer data you receive from these platforms" },
+              { stat: "Forever", label: "How long they keep that customer as theirs" },
+            ].map(({ stat, label }, i) => (
+              <FadeIn key={stat} delay={i * 0.1}>
+                <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.5rem" }}>
+                  <div style={{ fontWeight: 800, fontSize: "2.1rem", color: "#e05252", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>{stat}</div>
+                  <div style={{ color: "#2e3860", fontSize: "0.82rem", lineHeight: 1.55 }}>{label}</div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* SOLUTION */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <Tag label="The Solution" />
+            <H2>From Chat to Checkout <span style={{ color: BLUE_L }}>in Seconds.</span></H2>
+            <p style={{ color: "#3a4870", lineHeight: 1.8, maxWidth: 560, marginBottom: "2.5rem", fontSize: "0.93rem" }}>
+              ChatPay is a <strong style={{ color: "#7a9acc" }}>retention and margin recovery tool</strong> that builds a direct channel between you and your existing customers — so every order goes through you, not a middleman.
+            </p>
+          </FadeIn>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1rem" }}>
+            {[
+              { icon: "💬", title: "Conversational Ordering", body: "Customers message your WhatsApp, browse the menu, get AI recommendations, and order — all in one chat. No redirects. No apps." },
+              { icon: "📲", title: "You Own the Relationship", body: "Every customer who orders through ChatPay is yours. Broadcast promos, announce dishes, run deals — directly to them, forever." },
+              { icon: "💶", title: "Zero Commission", body: "Flat €40/month. Every euro from every order goes straight to you — no cuts, no hidden fees, no surprises." },
+              { icon: "🔁", title: "Built-In Loyalty", body: "Create habits, not one-offs. 'Order 5 times, get a free dessert' — keeps customers returning through your channel, not Uber's." },
+            ].map(({ icon, title, body }, i) => (
+              <FadeIn key={title} delay={i * 0.08}>
+                <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.5rem", height: "100%" }}>
+                  <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>{icon}</div>
+                  <div style={{ fontWeight: 700, fontSize: "0.98rem", color: "#c8d4f0", marginBottom: "0.5rem" }}>{title}</div>
+                  <div style={{ color: "#2e3860", fontSize: "0.82rem", lineHeight: 1.65 }}>{body}</div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ROI */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <Tag label="The Numbers" />
+            <H2>Build AI Sales Assistants <span style={{ color: BLUE_L }}>and keep every cent.</span></H2>
+            <p style={{ color: "#3a4870", lineHeight: 1.8, maxWidth: 520, marginBottom: "2rem", fontSize: "0.93rem" }}>
+              No setup. No code. Just plug in your store and start selling. Adjust the sliders to see your real monthly savings.
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.1}><ROICalculator /></FadeIn>
+        </div>
+      </div>
+
+      {/* COMPARISON */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <Tag label="How We Compare" />
+            <H2>ChatPay vs. the alternatives.</H2>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    {["", "Uber Eats / Just Eat", "Your Website", "ChatPay"].map((h, i) => (
+                      <th key={h} style={{ padding: "0.8rem 1rem", textAlign: i === 0 ? "left" : "center", color: i === 3 ? BLUE : "#1e2840", fontWeight: i === 3 ? 700 : 500, background: i === 3 ? "rgba(59,127,246,0.07)" : "transparent" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ["Commission per order", "15–20%", "0%", "0%"],
+                    ["Monthly fee", "None", "Hosting costs", "€40 flat"],
+                    ["Brings new customers", "✓ Strong", "✗ Limited", "✗ Retention-focused"],
+                    ["You own the customer data", "✗ No", "✓ Yes", "✓ Yes"],
+                    ["Direct marketing to customers", "✗ No", "Limited", "✓ WhatsApp broadcasts"],
+                    ["AI handles every conversation", "✗ No", "✗ No", "✓ Yes"],
+                    ["Loyalty programme built in", "✗ No", "Only if built", "✓ Yes"],
+                    ["Checkout inside the chat", "✗ No", "✗ No", "✓ Yes"],
+                  ].map(([label, ...vals], ri) => (
+                    <tr key={label} style={{ borderBottom: "1px solid #0e1220", background: ri % 2 === 0 ? "#0b0d15" : "transparent" }}>
+                      <td style={{ padding: "0.85rem 1rem", color: "#2e3860" }}>{label}</td>
+                      {vals.map((v, vi) => (
+                        <td key={vi} style={{ padding: "0.85rem 1rem", textAlign: "center", fontWeight: vi === 2 ? 600 : 400, color: vi === 2 ? BLUE_L : v.startsWith("✓") ? "#4caf87" : v.startsWith("✗") ? "#1e2840" : "#6080a0", background: vi === 2 ? "rgba(59,127,246,0.05)" : "transparent" }}>{v}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </FadeIn>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <Tag label="Common Questions" />
+            <H2>The hard questions, <span style={{ color: BLUE_L }}>answered directly.</span></H2>
+          </FadeIn>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "0.5rem" }}>
+            {[
+              { q: "Will ChatPay bring me new customers?", a: "Honestly — not immediately. ChatPay is built to convert and retain the customers you already have. Uber Eats brings discovery; ChatPay recovers the margin you lose on every order after that. Think of it as the tool that makes your existing customer base far more profitable." },
+              { q: "My customers already order from my website. Why do I need this?", a: "Your website is passive — customers have to find it, navigate it, and figure it out themselves. ChatPay is conversational: the AI answers questions, recommends dishes, and closes the order in the same app your customers use every day. The barrier to ordering is much lower, and you get a direct broadcast channel to bring them back." },
+              { q: "Is €40/month worth it?", a: "If just 20 orders per month shift from Uber Eats to ChatPay at an average of €25 with 20% commission, you save €100. Net gain is €60 in month one — and it compounds as more customers adopt the channel. The maths works even conservatively." },
+            ].map(({ q, a }, i) => (
+              <FadeIn key={q} delay={i * 0.1}>
+                <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.5rem" }}>
+                  <div style={{ fontWeight: 700, fontSize: "0.98rem", color: "#c0ccec", marginBottom: "0.6rem" }}>{q}</div>
+                  <div style={{ color: "#2e3860", fontSize: "0.84rem", lineHeight: 1.75 }}>{a}</div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* PRICING */}
+      <div style={{ borderBottom: `1px solid ${BORDER}` }}>
+        <div style={S}>
+          <FadeIn>
+            <div style={{ textAlign: "center", maxWidth: 500, margin: "0 auto" }}>
+              <Tag label="Pricing" />
+              <H2>One plan. No surprises.</H2>
+              <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "2.5rem", margin: "1.5rem 0" }}>
+                <div style={{ fontWeight: 900, fontSize: "3.6rem", color: "#fff", lineHeight: 1, letterSpacing: "-0.04em" }}>€40</div>
+                <div style={{ color: "#1e2840", fontSize: "0.82rem", marginBottom: "1.8rem" }}>per month · cancel anytime</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem", textAlign: "left", marginBottom: "2rem" }}>
+                  {[
+                    "AI sales agent on WhatsApp & Telegram",
+                    "Full menu / product catalogue integration",
+                    "Zero commission on every order",
+                    "Customer broadcast messaging",
+                    "Loyalty programme tools",
+                    "Dedicated onboarding support",
+                  ].map(f => (
+                    <div key={f} style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "#3a4870", fontSize: "0.87rem" }}>
+                      <span style={{ color: BLUE, fontWeight: 700 }}>✓</span> {f}
+                    </div>
+                  ))}
+                </div>
+                <a href="https://chatpay.ie" target="_blank" rel="noreferrer"
+                  style={{ display: "block", color: BLUE, padding: "0.95rem 2rem", borderRadius: 10, fontWeight: 600, fontSize: "0.9rem", textAlign: "center", textDecoration: "none", border: `1px solid ${BORDER}` }}>
+                  chatpay.ie →
+                </a>
+              </div>
+              <p style={{ color: "#151d30", fontSize: "0.74rem", lineHeight: 1.6 }}>
+                Built in Ireland for Irish businesses. The CHQ Building, Custom House Quay, North Wall, Dublin.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <div style={{ padding: "1.8rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+        <span style={{ fontWeight: 700, fontSize: "0.85rem" }}>
+            <span style={{ color: "#fff" }}>Chat</span><span style={{ color: BLUE }}>Pay</span>
+          </span>
+        <span style={{ color: "#151d30", fontSize: "0.7rem", letterSpacing: "0.04em" }}>© 2025 ChatPay. AI commerce, reimagined.</span>
+      </div>
+    </div>
+  );
+}
