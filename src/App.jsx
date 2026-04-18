@@ -166,7 +166,7 @@ export default function ChatPaySalesDeck() {
             {[
               { icon: "💬", title: "Conversational Ordering", body: "Customers message your WhatsApp, browse the menu, get AI recommendations, and order — all in one chat. No redirects. No apps." },
               { icon: "📲", title: "You Own the Relationship", body: "Every customer who orders through ChatPay is yours. Broadcast promos, announce dishes, run deals — directly to them, forever." },
-              { icon: "💶", title: "Zero Commission", body: "Flat €40/month. Every euro from every order goes straight to you — no cuts, no hidden fees, no surprises." },
+              { icon: "💶", title: "Zero Commission", body: "Flat €39/month. Every euro from every order goes straight to you — no cuts, no hidden fees, no surprises." },
               { icon: "🔁", title: "Built-In Loyalty", body: "Create habits, not one-offs. 'Order 5 times, get a free dessert' — keeps customers returning through your channel, not Uber's." },
             ].map(({ icon, title, body }, i) => (
               <FadeIn key={title} delay={i * 0.08}>
