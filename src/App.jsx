@@ -216,7 +216,7 @@ export default function ChatPaySalesDeck() {
                   {[
                     ["Commission per order", "15–20%", "0%", "0%"],
                     ["Monthly fee", "None", "Hosting costs", "€39/month"],
-                    ["Brings new customers", "✓ Strong", "✗ Limited", "✗ Retention-focused"],
+                    ["Brings new customers", "✓ Strong", "✗ Limited", "Retention-focused"],
                     ["You own the customer data", "✗ No", "✓ Yes", "✓ Yes"],
                     ["Direct marketing to customers", "✗ No", "Limited", "✓ WhatsApp broadcasts"],
                     ["AI handles every conversation", "✗ No", "✗ No", "✓ Yes"],
@@ -246,14 +246,14 @@ export default function ChatPaySalesDeck() {
           </FadeIn>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "0.5rem" }}>
             {[
-              { q: "Will ChatPay bring me new customers?", a: "Honestly — not immediately. ChatPay is built to convert and retain the customers you already have. Uber Eats brings discovery; ChatPay recovers the margin you lose on every order after that. Think of it as the tool that makes your existing customer base far more profitable." },
-              { q: "My customers already order from my website. Why do I need this?", a: "Your website is passive — customers have to find it, navigate it, and figure it out themselves. ChatPay is conversational: the AI answers questions, recommends dishes, and closes the order in the same app your customers use every day. The barrier to ordering is much lower, and you get a direct broadcast channel to bring them back." },
-              { q: "Is it worth it?", a: "If just 20 orders per month shift from Uber Eats to ChatPay at an average of €25 with 20% commission, you save €100. At €39/month that's a €61 net gain in month one — and it compounds as more customers adopt the channel. The maths works even conservatively." },
+              { q: "Will ChatPay bring me new customers?", a: "Honestly, not in the way Uber Eats does. And that's exactly why it works.\n\nUber Eats brings you customers but takes 20–30% of every order. ChatPay does the exact opposite. It helps you bring those customers back, sell to them directly, and keep the full profit margin.\n\nSo instead of constantly paying to chase new customers, you finally start making real money from the ones you already have." },
+              { q: "My customers already order from my website. Why do I need this?", a: "Your website works. But it only captures demand. ChatPay helps you create it.\n\nA website depends on customers already knowing what they want and going out of their way to order. Most don't — they hesitate, they browse, they leave. That's where you lose sales.\n\nChatPay brings ordering into the conversation, right inside the messaging apps your customers already use daily. It helps you take orders faster with no searching or friction, increase order value by recommending drinks, sides, or upgrades at the right moment, and bring customers back with simple offers sent directly to people who've already ordered.\n\nYour website is your storefront. ChatPay is your sales engine." },
+              { q: "Is it worth it?", a: "Let's keep it simple.\n\nIf just 20 orders a month move off Uber Eats, you're no longer paying the 20% commission. That's about €5 saved per order, or €100 per month.\n\nChatPay is €39/month (or €29 on our partner plan) — so you're already up €60+ from a very small shift.\n\nEverything after that is pure upside." },
             ].map(({ q, a }, i) => (
               <FadeIn key={q} delay={i * 0.1}>
                 <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.5rem" }}>
                   <div style={{ fontWeight: 700, fontSize: "0.98rem", color: "#c0ccec", marginBottom: "0.6rem" }}>{q}</div>
-                  <div style={{ color: "#7a8db5", fontSize: "0.84rem", lineHeight: 1.75 }}>{a}</div>
+                  <div style={{ color: "#7a8db5", fontSize: "0.84rem", lineHeight: 1.85, whiteSpace: "pre-line" }}>{a}</div>
                 </div>
               </FadeIn>
             ))}
